@@ -1,6 +1,6 @@
 # Arch name = native zypper name(s)
 #   a b    several packages       a|b   first one that exists
-#   @p     pattern                -     nothing to install
+#   @p     pattern                -     nothing to install   !   not available here (warns)
 # Names that are the same everywhere are not listed.
 base-devel     = @devel_basis
 gcc            = gcc gcc-c++
@@ -15,3 +15,4 @@ lua            = lua54|lua
 sqlite         = sqlite3
 redis          = redis|valkey
 firefox        = MozillaFirefox
+cursor         = !

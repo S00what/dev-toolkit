@@ -1,15 +1,16 @@
 # Maintainer: Your Name <you@example.com>
 pkgname=dev-toolkit
-pkgver=0.3.0
+pkgver=0.4.0
 pkgrel=1
 pkgdesc='Quick developer setup after switching Linux distro: pick toolkits, tweak with add/del'
 arch=('any')
 url='https://github.com/S00what/dev-toolkit'
 license=('GPL-3.0-or-later')
 depends=('bash' 'gawk')
-optdepends=('sudo: install packages as a normal user')
+optdepends=('sudo: install packages as a normal user'
+            'yay: AUR packages (Cursor)')
 source=("$pkgname-$pkgver.tar.gz::$url/archive/refs/tags/v$pkgver.tar.gz")
-sha256sums=('484bdb22c29af2c7b7fc7803e7de8eb4b99979a34188a91baefdcb48a7be6eca')
+sha256sums=('SKIP')   # replace with the real checksum: updpkgsums
 
 package() {
     cd "$pkgname-$pkgver"

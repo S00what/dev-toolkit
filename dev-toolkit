@@ -4,7 +4,7 @@
 
 set -u
 
-VERSION="0.3.0"
+VERSION="0.4.0"
 SELF_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
 
 DATA_DIR=""
@@ -21,6 +21,8 @@ ASSUME_YES=0
 DRY_RUN=0
 PRESELECT=""
 BACKEND=""
+AUR_HELPER=""
+RESOLVED=""
 SET=()
 SELECTED=()
 KEEPALIVE_PID=""
@@ -167,6 +169,13 @@ init_backend() {
     # shellcheck source=/dev/null
     source "$DATA_DIR/backends/$BACKEND.sh"
 
+    # AUR helpers refuse to run as root
+    if [[ $BACKEND == pacman ]] && (( EUID != 0 )); then
+        for h in yay paru; do
+            if command -v "$h" >/dev/null 2>&1; then AUR_HELPER=$h; break; fi
+        done
+    fi
+
     PKGS_FILE="$TMP/pkgs"; GROUPS_FILE="$TMP/groups"; NAMES_FILE="$TMP/names"
     load_names
     backend_groups >"$GROUPS_FILE"
@@ -224,6 +233,12 @@ add_resolved() {   # $1 = resolved name
 cmd_add() {
     local p=${1,,} res score best
     if in_set "$p"; then info "$p: already in list"; return; fi
+    if [[ $p == aur:* ]]; then
+        if [[ -z $AUR_HELPER ]]; then warn "AUR needs a pacman system with yay or paru"; return; fi
+        if "$AUR_HELPER" -Si "${p#aur:}" >/dev/null 2>&1; then add_resolved "$p"
+        else warn "package not found in AUR: ${p#aur:}"; fi
+        return
+    fi
     if grep -Fxq -- "$p" "$NAMES_FILE"; then add_resolved "$p"; return; fi
 
     [[ -t 2 ]] && printf 'searching...' >&2
@@ -309,33 +324,50 @@ select_toolkits() {
     done
 }
 
-# "a|b|c" -> first alternative that exists in this distro's repositories.
-# "@name" is a package group (dnf) and is not checked.
+# "a|b|c" -> first alternative that exists in this distro's repositories (sets RESOLVED).
+#   "@name"     package group / pattern (not checked)
+#   "aur:name"  AUR package (needs yay or paru, checked online)
+#   "!"         not available through this package manager
 resolve_token() {
     local alt
     local IFS='|'
+    RESOLVED=""
     for alt in $1; do
-        if [[ $alt == @* ]] || grep -Fxq -- "$alt" "$NAMES_FILE"; then
-            printf '%s' "$alt"; return 0
-        fi
+        case $alt in
+            '!') ;;
+            @*) RESOLVED=$alt; return 0 ;;
+            aur:*)
+                if [[ -n $AUR_HELPER ]] && "$AUR_HELPER" -Si "${alt#aur:}" >/dev/null 2>&1; then
+                    RESOLVED=$alt; return 0
+                fi ;;
+            *)
+                if grep -Fxq -- "$alt" "$NAMES_FILE"; then RESOLVED=$alt; return 0; fi ;;
+        esac
     done
     return 1
 }
 
 # Toolkit files hold canonical (Arch) names; maps/<backend>.map translates them.
 build_set() {
-    local t p tok r val
-    local -a skipped=()
+    local t p tok val
+    local -a skipped=() noaur=()
     for t in base ${SELECTED[@]+"${SELECTED[@]}"}; do
         while read -r p; do
             val=${MAP[$p]-$p}
             for tok in $val; do
                 [[ $tok == - ]] && continue
-                if r=$(resolve_token "$tok"); then add_to_set "$r"; else skipped+=("$p"); fi
+                if resolve_token "$tok"; then
+                    add_to_set "$RESOLVED"
+                elif [[ $tok == aur:* && -z $AUR_HELPER ]]; then
+                    noaur+=("$p")
+                else
+                    skipped+=("$p")
+                fi
             done
         done < <(toolkit_pkgs "$t")
     done
     if ((${#skipped[@]})); then warn "Skipped (not in repositories): ${skipped[*]}"; fi
+    if ((${#noaur[@]})); then warn "Skipped (needs an AUR helper, yay or paru): ${noaur[*]}"; fi
 }
 
 start_sudo_keepalive() {

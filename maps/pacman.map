@@ -1,0 +1,4 @@
+# Arch names are the canonical ones, so this file only holds exceptions.
+#   aur:name   build from the AUR (needs yay or paru)
+# "code" is the open-source build of VS Code from the official repository.
+cursor = aur:cursor-bin

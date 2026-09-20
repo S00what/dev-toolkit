@@ -1,6 +1,6 @@
 # Arch name = native apt name(s)
 #   a b    several packages       a|b   first one that exists
-#   -      nothing to install
+#   -      nothing to install       !   not available here (warns)
 # Names that are the same everywhere are not listed.
 base-devel     = build-essential
 gcc            = gcc g++
@@ -18,3 +18,4 @@ go             = golang-go
 lua            = lua5.4|lua5.3
 sqlite         = sqlite3
 redis          = redis-server|redis
+cursor         = !
