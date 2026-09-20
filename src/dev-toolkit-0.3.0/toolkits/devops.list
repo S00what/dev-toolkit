@@ -1,6 +1,0 @@
-# desc: containers, orchestration, infrastructure
-docker
-docker-compose
-kubectl
-ansible
-opentofu
