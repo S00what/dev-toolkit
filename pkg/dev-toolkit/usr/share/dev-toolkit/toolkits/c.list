@@ -1,0 +1,8 @@
+# desc: C / C++ / C# development
+gcc
+clang
+make
+cmake
+gdb
+valgrind
+dotnet-sdk

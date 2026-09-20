@@ -1,0 +1,17 @@
+# Arch name = native zypper name(s)
+#   a b    several packages       a|b   first one that exists
+#   @p     pattern                -     nothing to install
+# Names that are the same everywhere are not listed.
+base-devel     = @devel_basis
+gcc            = gcc gcc-c++
+dotnet-sdk     = dotnet-sdk-9.0|dotnet-sdk-8.0
+nodejs         = nodejs-default|nodejs22|nodejs20
+npm            = npm-default|npm22|npm20
+kubectl        = kubernetes-client
+python         = python3
+python-pip     = python3-pip
+jdk-openjdk    = java-21-openjdk-devel|java-17-openjdk-devel
+lua            = lua54|lua
+sqlite         = sqlite3
+redis          = redis|valkey
+firefox        = MozillaFirefox

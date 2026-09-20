@@ -1,0 +1,19 @@
+# Arch name = native dnf name(s)
+#   a b    several packages       a|b   first one that exists
+#   @g     package group          -     nothing to install
+# Names that are the same everywhere are not listed.
+base-devel     = @development-tools
+vim            = vim-enhanced
+gcc            = gcc gcc-c++
+wget           = wget|wget2-wget
+dotnet-sdk     = dotnet-sdk-9.0|dotnet-sdk-8.0
+yarn           = yarnpkg|yarn
+docker         = moby-engine|docker-ce
+docker-compose = docker-compose|docker-compose-plugin
+kubectl        = kubernetes-client
+python         = python3
+python-pip     = python3-pip
+jdk-openjdk    = java-latest-openjdk-devel
+go             = golang
+postgresql     = postgresql-server
+redis          = valkey|redis

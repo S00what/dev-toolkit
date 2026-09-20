@@ -1,0 +1,7 @@
+# desc: high-level languages (Python, Ruby, Java, Go, Lua)
+python
+python-pip
+ruby
+jdk-openjdk
+go
+lua

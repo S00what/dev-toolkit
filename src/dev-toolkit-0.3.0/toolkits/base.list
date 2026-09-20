@@ -1,0 +1,8 @@
+# desc: essentials (always installed)
+git
+curl
+wget
+base-devel
+vim
+unzip
+htop

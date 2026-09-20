@@ -1,0 +1,6 @@
+# desc: command-line quality of life
+tmux
+fzf
+ripgrep
+jq
+bat
