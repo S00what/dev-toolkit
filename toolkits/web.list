@@ -1,0 +1,12 @@
+# desc: web development (frontend + backend)
+# shared
+nodejs
+npm
+pnpm
+yarn
+# frontend
+typescript
+esbuild
+dart-sass
+firefox
+chromium
